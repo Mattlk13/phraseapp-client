@@ -7,6 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/phrase/phraseapp-client/internal/paths"
+	"github.com/phrase/phraseapp-client/internal/placeholders"
+	"github.com/phrase/phraseapp-client/internal/print"
+	"github.com/phrase/phraseapp-client/internal/shared"
 	"github.com/phrase/phraseapp-go/phraseapp"
 	"gopkg.in/yaml.v2"
 )
@@ -103,14 +107,12 @@ func (tgt *Target) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }
 
 func (target *Target) CheckPreconditions() error {
-	if err := ValidPath(target.File, target.FileFormat, ""); err != nil {
+	if err := paths.Validate(target.File, target.FileFormat, ""); err != nil {
 		return err
 	}
 
 	if strings.Count(target.File, "*") > 0 {
-		return fmt.Errorf(
-			"File pattern for 'pull' cannot include any 'stars' *. Please specify direct and valid paths with file name!\n %s#targets", docsConfigUrl,
-		)
+		return fmt.Errorf("File pattern for 'pull' cannot include any 'stars' *. Please specify direct and valid paths with file name!\n %s#targets", shared.DocsConfigUrl)
 	}
 
 	duplicatedPlaceholders := []string{}
@@ -125,7 +127,7 @@ func (target *Target) CheckPreconditions() error {
 		return fmt.Errorf(fmt.Sprintf("%s can only occur once in a file pattern!", dups))
 	}
 
-	if target.GetLocaleID() == "" && !containsAnyPlaceholders(target.File) {
+	if target.GetLocaleID() == "" && !placeholders.ContainsAnyPlaceholders(target.File) {
 		return fmt.Errorf("Could not find any locale information. Please specify a 'locale_id' in your params or provide a placeholder!")
 	}
 
@@ -160,7 +162,7 @@ func (target *Target) Pull(client *phraseapp.Client) error {
 		if err != nil {
 			return fmt.Errorf("%s for %s", err, localeFile.Path)
 		} else {
-			sharedMessage("pull", localeFile)
+			print.Success("Downloaded %s to %s", localeFile.Message(), localeFile.RelPath())
 		}
 		if Debug {
 			fmt.Fprintln(os.Stderr, strings.Repeat("-", 10))
@@ -330,10 +332,10 @@ func TargetsFromConfig(cmd *PullCommand) (Targets, error) {
 }
 
 func createFile(path string) error {
-	err := Exists(path)
+	err := paths.Exists(path)
 	if err != nil {
 		absDir := filepath.Dir(path)
-		err := Exists(absDir)
+		err := paths.Exists(absDir)
 		if err != nil {
 			os.MkdirAll(absDir, 0700)
 		}

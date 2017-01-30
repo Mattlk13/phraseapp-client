@@ -11,6 +11,8 @@ import (
 
 	"github.com/jpillora/backoff"
 	"github.com/phrase/phraseapp-client/internal/helpers"
+	"github.com/phrase/phraseapp-client/internal/paths"
+	"github.com/phrase/phraseapp-client/internal/placeholders"
 	"github.com/phrase/phraseapp-client/internal/print"
 	"github.com/phrase/phraseapp-client/internal/spinner"
 	"github.com/phrase/phraseapp-go/phraseapp"
@@ -142,7 +144,7 @@ func (source *Source) Push(client *phraseapp.Client, waitForResults bool) error 
 }
 
 func (source *Source) SystemFiles() ([]string, error) {
-	pattern := placeholderRegexp.ReplaceAllString(source.File, "*")
+	pattern := placeholders.Regexp.ReplaceAllString(source.File, "*")
 	parts := strings.SplitN(pattern, "**", 2)
 	var pre, post string
 
@@ -175,7 +177,7 @@ func (source *Source) SystemFiles() ([]string, error) {
 		tokenCountPre := len(splitPathIntoSegments(pre))
 
 		for _, cand := range candidates {
-			if !isDir(cand) {
+			if !paths.IsDir(cand) {
 				continue
 			}
 
@@ -260,11 +262,11 @@ func (source *Source) LocaleFiles() (LocaleFiles, error) {
 		return nil, err
 	}
 
-	patternTokens := splitPathToTokens(source.File)
+	patternTokens := paths.Split(source.File)
 
 	var localeFiles LocaleFiles
 	for _, path := range filePaths {
-		pathTokens := splitPathToTokens(path)
+		pathTokens := paths.Split(path)
 		localeFile := extractParamsFromPathTokens(patternTokens, pathTokens)
 
 		absolutePath, err := filepath.Abs(path)
@@ -387,21 +389,6 @@ func splitString(s string, set string) []string {
 	return slist
 }
 
-func splitPathToTokens(s string) []string {
-	tokens := []string{}
-	splitSet := separator
-	if separator == "\\" {
-		splitSet = "\\/"
-	}
-	for _, token := range splitString(s, splitSet) {
-		if token == "." || token == "" {
-			continue
-		}
-		tokens = append(tokens, token)
-	}
-	return tokens
-}
-
 func extractParamsFromPathTokens(patternTokens, pathTokens []string) *LocaleFile {
 	localeFile := new(LocaleFile)
 
@@ -443,7 +430,7 @@ func extractParamsFromPathTokens(patternTokens, pathTokens []string) *LocaleFile
 }
 
 func (localeFile *LocaleFile) extractParamFromPathToken(patternToken, pathToken string) {
-	groups := placeholderRegexp.FindAllString(patternToken, -1)
+	groups := placeholders.Regexp.FindAllString(patternToken, -1)
 	if len(groups) <= 0 {
 		return
 	}
