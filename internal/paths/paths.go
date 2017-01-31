@@ -49,18 +49,6 @@ func IsDir(path string) bool {
 	return stat.IsDir()
 }
 
-func Split(s string) []string {
-	return strings.FieldsFunc(filepath.Clean(s), makeSplitFunc())
-}
-
-func makeSplitFunc() func(c rune) bool {
-	if os.PathSeparator == '\\' {
-		return func(c rune) bool {
-			return c == '/' || c == '\\'
-		}
-	}
-
-	return func(c rune) bool {
-		return c == '/'
-	}
+func Segments(s string) []string {
+	return strings.FieldsFunc(filepath.Clean(s), func(c rune) bool { return c == filepath.Separator })
 }

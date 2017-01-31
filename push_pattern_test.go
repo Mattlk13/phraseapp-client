@@ -342,8 +342,8 @@ func (patterns Patterns) TestPatterns(t *testing.T) {
 }
 
 func (pattern *Pattern) TestPattern(t *testing.T, idx int) {
-	tokens := paths.Split(pattern.File)
-	pathTokens := paths.Split(pattern.TestPath)
+	tokens := paths.Segments(pattern.File)
+	pathTokens := paths.Segments(pattern.TestPath)
 
 	localeFile := extractParamsFromPathTokens(tokens, pathTokens)
 
