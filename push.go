@@ -42,7 +42,7 @@ func (cmd *PushCommand) Run() error {
 		return err
 	}
 
-	formatMap, err := GetFormats(client)
+	formatMap, err := formatsByApiName(client)
 	if err != nil {
 		return fmt.Errorf("Error retrieving format list from PhraseApp: %s", err)
 	}
@@ -139,6 +139,18 @@ func (source *Source) Push(client *phraseapp.Client, waitForResults bool) error 
 	}
 
 	return nil
+}
+
+func formatsByApiName(client *phraseapp.Client) (map[string]*phraseapp.Format, error) {
+	formats, err := client.FormatsList(1, 25)
+	if err != nil {
+		return nil, err
+	}
+	formatMap := map[string]*phraseapp.Format{}
+	for _, format := range formats {
+		formatMap[format.ApiName] = format
+	}
+	return formatMap, nil
 }
 
 // Return all locale files from disk that match the source pattern.

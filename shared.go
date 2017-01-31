@@ -47,18 +47,6 @@ func RemoteLocales(client *phraseapp.Client, projectId string) ([]*phraseapp.Loc
 	return result, nil
 }
 
-func GetFormats(client *phraseapp.Client) (map[string]*phraseapp.Format, error) {
-	formats, err := client.FormatsList(1, 25)
-	if err != nil {
-		return nil, err
-	}
-	formatMap := map[string]*phraseapp.Format{}
-	for _, format := range formats {
-		formatMap[format.ApiName] = format
-	}
-	return formatMap, nil
-}
-
 func isNotFound(err error) bool {
 	return (err != nil && strings.Contains(err.Error(), "404"))
 }
