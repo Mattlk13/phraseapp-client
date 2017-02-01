@@ -19,8 +19,15 @@ func ToGlobbingPattern(s string) string {
 	return Regexp.ReplaceAllString(s, "*")
 }
 
-// Resolve matches s against pattern and returns the values
+// Resolve matches s against pattern and maps placeholders in pattern to
+// substrings of s.
+// Resolve handles '*' wildcards in the pattern, but will return an error
+// if the pattern contains '**'.
 func Resolve(s, pattern string) (map[string]string, error) {
+	if strings.Contains(pattern, "**") {
+		return map[string]string{}, fmt.Errorf("'**' wildcard not allowed in pattern")
+	}
+
 	placeholders := Regexp.FindAllString(pattern, -1)
 	if len(placeholders) <= 0 {
 		return map[string]string{}, nil
@@ -48,7 +55,7 @@ func Resolve(s, pattern string) (map[string]string, error) {
 	}
 
 	// drop first element, which is the entire string s wich match name ""
-	matchNames, matches = matchNames[1:], matches[1:]
+	matches, matchNames = matches[1:], matchNames[1:]
 
 	values := map[string]string{}
 	for i, match := range matches {
