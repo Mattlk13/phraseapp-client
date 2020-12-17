@@ -1,8 +1,14 @@
-# PhraseApp Client
+# [Deprecated]
+This CLI is deprecated and has been replaced by [CLI v2](https://github.com/phrase/phrase-cli)
+
+
+# PhraseApp Client (CLI v1)
 
 The PhraseApp Client is available for all major platforms and lets you access all API endpoints as well as easily sync your locale files between your source code and PhraseApp.
 
 Check out our [documentation for more information](https://help.phrase.com/phraseapp-for-developers/phraseapp-client/phraseapp-in-your-terminal).
+
+If you are looking for out newer CLI v2, please go to [https://github.com/phrase/phrase-cli](https://github.com/phrase/phrase-cli)
 
 ## Quick Start
 
@@ -69,5 +75,4 @@ library | license
 ---|---
 github.com/bgentry/speakeasy | [MIT](https://opensource.org/licenses/mit-license.php) / [Apache 2.0](https://github.com/bgentry/speakeasy/blob/master/LICENSE_WINDOWS)
 github.com/daviddengcn/go-colortext | [BSD](https://github.com/daviddengcn/go-colortext/blob/master/LICENSE) / [MIT](https://github.com/daviddengcn/go-colortext/blob/master/LICENSE)
-github.com/dynport/dgtk | [Apache 2.0](https://github.com/dynport/dgtk/blob/master/LICENSE)
 gopkg.in/yaml.v2 | [LGPLv3](https://github.com/go-yaml/yaml/blob/v2/LICENSE)
